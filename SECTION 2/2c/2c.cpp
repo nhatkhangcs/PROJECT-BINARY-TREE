@@ -99,6 +99,7 @@ bool evaluatePrefix(string exp)
 int main()
 {
     string exp;
+    cout << "Input either an infix or an postfix expression: ";
     getline(cin, exp);
     if (isalpha(exp[0])) cout << "Postfix evaluation: " << evaluatePostfix(exp);
     else cout << "Prefix evaluation: " << evaluatePrefix(exp);

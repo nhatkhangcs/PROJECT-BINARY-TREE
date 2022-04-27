@@ -10,7 +10,7 @@ bool isOperator(char c)
     return (!isalpha(c) && !isdigit(c));
 }
  
-int getPriority(char C)
+int getPriority(char c)
 {
     if (c == '>')
         return 1;
@@ -29,7 +29,8 @@ string infixToPostfix(string infix)
     string output;
  
     for (int i = 0; i < l; i++) {
- 
+        
+        if (infix[i] == ' ') continue;
         // If the scanned character is an
         // operand, add it to output.
         if (isalpha(infix[i]) || isdigit(infix[i]))
