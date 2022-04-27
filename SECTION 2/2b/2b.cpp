@@ -10,7 +10,7 @@ int main()
 {
     string s;
     cout << "Please enter a infix-notation representation of an arithmetic expression: ";
-    cin >> s;
+    getline(cin,s);
     cout << "Infix ---> Postfix: ";
     infixToPostfix(s);
     return 0;
