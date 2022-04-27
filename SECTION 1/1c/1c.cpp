@@ -138,8 +138,9 @@ double evaluatePrefix(string exp){
 
 int main(){
     string exp;
+    cout << "Input either an infix or an postfix expression: ";
     getline(cin, exp);
-    if (isdigit(exp[0])) cout << fixed << setprecision(3) << evaluatePostfix(exp);
-    else cout << fixed << setprecision(3) << evaluatePrefix(exp);
+    if (isdigit(exp[0])) cout << "Postfix evaluation: " << fixed << setprecision(3) << evaluatePostfix(exp);
+    else cout << "Prefix evaluation: " << fixed << setprecision(3) << evaluatePrefix(exp);
     return 0;
 }
