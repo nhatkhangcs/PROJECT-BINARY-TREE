@@ -1,0 +1,17 @@
+{
+    "files.associations": {
+        "iostream": "cpp",
+        "vector": "cpp",
+        "string": "cpp",
+        "cmath": "cpp",
+        "ostream": "cpp",
+        "xstring": "cpp",
+        "stack": "cpp",
+        "utility": "cpp",
+        "iosfwd": "cpp",
+        "algorithm": "cpp",
+        "xlocale": "cpp",
+        "ios": "cpp"
+    },
+    "C_Cpp.errorSquiggles": "Disabled"
+}
