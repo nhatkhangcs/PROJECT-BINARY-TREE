@@ -25,8 +25,7 @@ string infixToPostfix(string infix){
     stack<char> char_stack;
     string output;
  
-    for (int i = 0; i < l; i++) {
-        
+    for (int i = 0; i < l; i++){
         if (isalpha(infix[i]) || isdigit(infix[i]))
             output += infix[i];
 
@@ -55,7 +54,7 @@ string infixToPostfix(string infix){
                     while (getPriority(infix[i]) < getPriority(char_stack.top())){
                         output += char_stack.top();
                         char_stack.pop();
-                    }  
+                    }
                 }
  
                 char_stack.push(infix[i]);

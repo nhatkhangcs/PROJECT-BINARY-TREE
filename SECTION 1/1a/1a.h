@@ -19,8 +19,7 @@ int getPriority(char C){
     return 0;
 }
  
-string infixToPostfix(string infix)
-{
+string infixToPostfix(string infix){
     infix = '(' + infix + ')';
     int l = infix.size();
     stack<char> char_stack;
@@ -52,7 +51,7 @@ string infixToPostfix(string infix)
                         char_stack.pop();
                     }
                 }
-                
+
                 else{
                     while (getPriority(infix[i]) < getPriority(char_stack.top())){
                         output += char_stack.top();
@@ -88,10 +87,8 @@ string infixToPrefix(string infix){
             i++;
         }
     }
- 
+    
     string prefix = infixToPostfix(infix);
- 
     reverse(prefix.begin(), prefix.end());
-
     return prefix;
 }
