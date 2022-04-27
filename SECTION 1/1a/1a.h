@@ -5,13 +5,11 @@
 
 using namespace std;
 
-bool isOperator(char c)
-{
+bool isOperator(char c){
     return (!isalpha(c) && !isdigit(c));
 }
  
-int getPriority(char C)
-{
+int getPriority(char C){
     if (C == '+' || C == '-')
         return 1;
     else if (C == '*' || C == '/')
@@ -38,7 +36,7 @@ string infixToPostfix(string infix)
             char_stack.push('(');
  
         else if (infix[i] == ')') {
-            while (char_stack.top() != '(') {
+            while (char_stack.top() != '('){
                 output += char_stack.top();
                 char_stack.pop();
             }
@@ -46,22 +44,17 @@ string infixToPostfix(string infix)
             char_stack.pop();
         }
  
-        else
-        {
-            if (isOperator(char_stack.top()))
-            {
-                if(infix[i] == '^')
-                {
-                    while (getPriority(infix[i]) <= getPriority(char_stack.top()))
-                    {
+        else{
+            if (isOperator(char_stack.top())){
+                if(infix[i] == '^'){
+                    while (getPriority(infix[i]) <= getPriority(char_stack.top())){
                         output += char_stack.top();
                         char_stack.pop();
                     }
                 }
-                else
-                {
-                    while (getPriority(infix[i]) < getPriority(char_stack.top()))
-                    {
+                
+                else{
+                    while (getPriority(infix[i]) < getPriority(char_stack.top())){
                         output += char_stack.top();
                         char_stack.pop();
                     }  
@@ -80,17 +73,17 @@ string infixToPostfix(string infix)
     return output;
 }
  
-string infixToPrefix(string infix)
-{
+string infixToPrefix(string infix){
     int l = infix.size();
     reverse(infix.begin(), infix.end());
     for (int i = 0; i < l; i++) {
 
-        if (infix[i] == '(') {
+        if (infix[i] == '('){
             infix[i] = ')';
             i++;
         }
-        else if (infix[i] == ')') {
+
+        else if (infix[i] == ')'){ 
             infix[i] = '(';
             i++;
         }
@@ -99,6 +92,6 @@ string infixToPrefix(string infix)
     string prefix = infixToPostfix(infix);
  
     reverse(prefix.begin(), prefix.end());
- 
+
     return prefix;
 }
