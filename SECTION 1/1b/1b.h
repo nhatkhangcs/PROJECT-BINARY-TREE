@@ -25,8 +25,10 @@ string infixToPostfix(string infix){
     int l = infix.size();
     stack<char> char_stack;
     string output;
- 
+
     for (int i = 0; i < l; i++){
+        if (infix[i] == ' ') continue;
+
         if (isalpha(infix[i]) || isdigit(infix[i]))
             output += infix[i];
 
