@@ -28,12 +28,21 @@ int main()
     // for (itr = dictionary.begin(); itr != dictionary.end(); ++itr) {
     //     cout << '\t' << itr->first << '\t' << itr->second<< '\n';
     // }
+    
     // string testStr;// ="(P+(Q*R)/(S-T))";
+
     // string testStr="4+)(3*2";
-    string testStr="2//3";
+    // string testStr="1++1";
+    
     // cin>>testStr;
-    cout<<validity(testStr);
-    if(validity(testStr)!=0) errorMessage(testStr);
+
+    // cout << isOperator('/');
+    // cout << nxtOperatorIndex(testStr, 2);
+    
+    // cout<<validity(testStr);
+    
+    // cout<<isdigit('1');
+    // if(validity(testStr)!=0) errorMessage(testStr);
     // infixToPrefix(testStr);
     // cout<<infixToPrefix(testStr);
     // cout<<infixToPostfix(testStr);
