@@ -1,16 +1,18 @@
 #include <iostream>
 #include <stack>
-#include <cstring>
-#include <cmath>
+#include <string>
 #include <algorithm>
 
 using namespace std;
 
-bool isOperator(char c){
+bool isOperator(char c)
+{
     return (!isalpha(c) && !isdigit(c));
+    // return (c=='+'||c=='-'||c=='*'||c=='/'||c=='^');
 }
- 
-int getPriority(char C){
+
+int precedence(char C)
+{
     if (C == '+' || C == '-')
         return 1;
     else if (C == '*' || C == '/')
@@ -19,77 +21,76 @@ int getPriority(char C){
         return 3;
     return 0;
 }
- 
-string infixToPostfix(string infix){
-    infix = '(' + infix + ')';
-    int l = infix.size();
-    stack<char> char_stack;
-    string output;
 
-    for (int i = 0; i < l; i++) {
-        if (infix[i] == ' ') continue;
+string infixToPostfix(string infix)
+{
+ 
+    stack<char> charStack; 
+    string result;
+ 
+    for (int i = 0; i < infix.length(); i++) {
+        char c = infix[i];
+ 
+        if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
+            || (c >= '0' && c <= '9'))
+            result += c;
+ 
 
-        if (isalpha(infix[i]) || isdigit(infix[i]))
-            output += infix[i];
- 
-        else if (infix[i] == '(')
-            char_stack.push('(');
- 
-        else if (infix[i] == ')') {
-            while (char_stack.top() != '('){
-                output += char_stack.top();
-                char_stack.pop();
+        else if (c == '(') charStack.push('(');
+        else if (c == ')') {
+            while (charStack.top() != '(') {
+                result += charStack.top();
+                charStack.pop();
             }
- 
-            char_stack.pop();
+            charStack.pop();
         }
  
-        else{
-            if (isOperator(char_stack.top())){
-                if(infix[i] == '^'){
-                    while (getPriority(infix[i]) <= getPriority(char_stack.top())){
-                        output += char_stack.top();
-                        char_stack.pop();
-                    }
+        else {
+            while (!charStack.empty()
+                   && precedence(infix[i]) <= precedence(charStack.top())) {
+                if (c == '^' && charStack.top() == '^')
+                    break;
+                else {
+                    result += charStack.top();
+                    charStack.pop();
                 }
-
-                else{
-                    while (getPriority(infix[i]) < getPriority(char_stack.top())){
-                        output += char_stack.top();
-                        char_stack.pop();
-                    }  
-                }
- 
-                char_stack.push(infix[i]);
             }
+            charStack.push(c);
         }
     }
-
-    while(!char_stack.empty()){
-        output += char_stack.top();
-        char_stack.pop();
+ 
+    while (!charStack.empty()) {
+        result += charStack.top();
+        charStack.pop();
     }
-
-    return output;
+ 
+    return result;
 }
- 
-string infixToPrefix(string infix){
+
+
+string infixToPrefix(string infix)
+{
     int l = infix.size();
     reverse(infix.begin(), infix.end());
     for (int i = 0; i < l; i++) {
-
-        if (infix[i] == '('){
+        if (infix[i] == '(') {
             infix[i] = ')';
-            i++;
         }
-
-        else if (infix[i] == ')'){ 
+        else if (infix[i] == ')') {
             infix[i] = '(';
-            i++;
         }
     }
-    
     string prefix = infixToPostfix(infix);
+ 
     reverse(prefix.begin(), prefix.end());
+ 
     return prefix;
 }
+
+
+
+
+
+
+
+
