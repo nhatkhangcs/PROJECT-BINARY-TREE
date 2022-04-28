@@ -1,4 +1,40 @@
 #include "./1a/1a.h"
+#include <stack>
+bool properFloatingPoint(string s){
+  for(int i=0;i<s.length();i++){
+    if(s[i]=='.'){
+      if(!isdigit(s[i+1])) return false;
+    }
+  }
+  return true;
+}
+string removeSpace(string s){
+  string removed;
+  for(int i=0;i<s.length();i++){
+    if(!isspace(s[i])) removed+=s[i];
+  }
+  return removed;
+}
+int numberInString(string s){
+  int count = 0;
+  bool flag = false;
+  for(int i=0;i<s.length();i++){
+    if(isdigit(s[i])){
+      if(flag==false) count++;
+      flag = true;
+    }
+    else flag = false;
+  }
+  return count;
+}
+int numberOfOperators(string s){
+  int count = 0;
+  for(int i=0;i<s.length();i++){
+    if(isOperator(s[i])&&s[i]!='('&&s[i]!=')') 
+      count++;
+  }
+  return count;
+}
 string extractBrackets(string s){
   string extracted="";
   for(int i=0;i<s.length();i++){
@@ -62,13 +98,21 @@ bool multiOutputError(string str){
   return false;
 }
 bool syntaxError(string str){
+    bool flag=false;
     //parentheses checkpoint
-    if(balancedParentheses(extractBrackets(str))) return false;
-    //floating point checkpoint
-    if(nxtOperatorIndex(str,0)==-1) return true;
+    if(!balancedParentheses(extractBrackets(str))) 
+      flag = true;
+    //no operator checkpoint
+    else if(nxtOperatorIndex(str,0)==-1) 
+      flag = true;
     //blank checkpoint
-    
-    return true;
+    else if((numberInString(str)-numberInString(removeSpace(str)))!=0){ 
+      flag = true;
+    }
+    //floating point checkpoint
+    else if(!properFloatingPoint(str)) 
+      flag = true;
+    return flag;
 }
 int validity(string str){
     //consecutive operators:
@@ -76,10 +120,9 @@ int validity(string str){
     //precedence order:
     else if(multiOutputError(str)) return 2;
     //parenthesis:
-    else if(syntaxError(str)) return 3;
-    //floating point:
     //blank:
-    
+    //floating point:
+    else if(syntaxError(str)) return 3;
     return 0;
 }
 void errorMessage(string str){
@@ -91,6 +134,3 @@ void errorMessage(string str){
   }
   
 }
-
-
-

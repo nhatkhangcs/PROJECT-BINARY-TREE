@@ -7,7 +7,7 @@ using namespace std;
 
 bool isOperator(char c)
 {
-    return (!isalpha(c) && !isdigit(c));
+    return (!isalpha(c) && !isdigit(c) && !isspace(c));
     // return (c=='+'||c=='-'||c=='*'||c=='/'||c=='^');
 }
 

@@ -29,17 +29,17 @@ int main()
     //     cout << '\t' << itr->first << '\t' << itr->second<< '\n';
     // }
     
-    // string testStr;// ="(P+(Q*R)/(S-T))";
+    string testStr;// ="(P+(Q*R)/(S-T))";
 
-    // string testStr="4+)(3*2";
-    // string testStr="1++1";
+    // string testStr="3 + 5 ^ 8";
+    // string testStr="3 + 5 ^ 8";
     
-    // cin>>testStr;
+    getline(cin, testStr);
 
     // cout << isOperator('/');
     // cout << nxtOperatorIndex(testStr, 2);
     
-    // cout<<validity(testStr);
+    cout<<validity(testStr);
     
     // cout<<isdigit('1');
     // if(validity(testStr)!=0) errorMessage(testStr);
