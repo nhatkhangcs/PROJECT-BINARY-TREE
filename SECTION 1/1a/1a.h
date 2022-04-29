@@ -5,7 +5,11 @@
 
 using namespace std;
 
-int prec(char C){
+bool isOperator(char c){
+    return(!isalpha(c) && !isdigit(c));
+}
+
+int precedence(char C){
     if (C == '+' || C == '-')
         return 1;
     else if (C == '*' || C == '/')
@@ -41,7 +45,7 @@ string infixToPostfix(string s)
  
         else {
             while (!st.empty()
-                   && prec(s[i]) <= prec(st.top())) {
+                   && precedence(s[i]) <= precedence(st.top())) {
                 if (c == '^' && st.top() == '^')
                     break;
                 else {
