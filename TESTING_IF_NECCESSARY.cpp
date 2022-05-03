@@ -3,7 +3,8 @@
 #include <iostream>
 // #include "./SECTION 1/1a/1a.h"
 // #include "./SECTION 1/1a/1a.h"
-#include "./SECTION 1/validString.h"
+#include "./SECTION 1/validArithmetic.h"
+#include "./SECTION 2/validLogical.h"
 #include <string>
 #include <algorithm>
 #include <vector>
@@ -39,7 +40,8 @@ int main()
     // cout << isOperator('/');
     // cout << nxtOperatorIndex(testStr, 2);
     
-    cout<<validity(testStr);
+    //cout<<arithmeticValidity(testStr);
+    cout<<logicalValidity(testStr);
     
     // cout<<isdigit('1');
     // if(validity(testStr)!=0) errorMessage(testStr);

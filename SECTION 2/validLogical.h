@@ -1,4 +1,4 @@
-#include "./1a/1a.h"
+#include "./2a/2a.h"
 #include <stack>
 bool properFloatingPoint(string s){
   for(int i=0;i<s.length();i++){
@@ -114,7 +114,7 @@ bool syntaxError(string str){
       flag = true;
     return flag;
 }
-int validity(string str){
+int logicalValidity(string str){
     //consecutive operators:
     if(undefinedError(str)) return 1;
     //precedence order:
@@ -126,7 +126,7 @@ int validity(string str){
     return 0;
 }
 void errorMessage(string str){
-  switch(validity(str)){
+  switch(logicalValidity(str)){
     case 1: cout << "undefined error";break;
     case 2: cout << "multiple output";break;
     case 3: cout << "syntax error";break;
