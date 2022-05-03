@@ -10,13 +10,13 @@ bool isOperator(char c)
     return (!isalpha(c) && !isdigit(c));
 }
  
-int getPriority(char c)
+int precedence(char c)
 {
-    if (c == '>')
+    if (c == '>')// implication ->
         return 1;
-    else if (c == '|' || c == '^' || c == '+')
+    else if (c == '|' || c == '&' || c == '+')//(or | and & xor +)
         return 2;
-    else if (c == '!')
+    else if (c == '!')// negation 
         return 3;
     return 0;
 }
@@ -59,9 +59,9 @@ string infixToPostfix(string infix)
         {
             if (isOperator(char_stack.top()))
             {
-                if(infix[i] == '^' || infix[i] == '|')
+                if(infix[i] == '&' || infix[i] == '|')
                 {
-                      while (getPriority(infix[i]) <= getPriority(char_stack.top()))
+                      while (precedence(infix[i]) <= precedence(char_stack.top()))
                        {
                          output += char_stack.top();
                          char_stack.pop();
@@ -70,7 +70,7 @@ string infixToPostfix(string infix)
                 }
                 else
                 {
-                    while (getPriority(infix[i]) < getPriority(char_stack.top()))
+                    while (precedence(infix[i]) < precedence(char_stack.top()))
                        {
                          output += char_stack.top();
                          char_stack.pop();
