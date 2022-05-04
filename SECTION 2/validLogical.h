@@ -1,13 +1,37 @@
 #include "./2a/2a.h"
 #include <stack>
-bool properFloatingPoint(string s){
-  for(int i=0;i<s.length();i++){
-    if(s[i]=='.'){
-      if(!isdigit(s[i+1])) return false;
+
+int countPropositions(string s){
+  int count=0;
+  int state=0;
+  for(int i = 0;i<s.length();i++){
+    if(isspace(s[i])||isOperator(s[i])){
+    	state = 0; 
+    }
+    else if(state == 0){
+    	state = 1;
+    	++count;
     }
   }
-  return true;
+  return count;
 }
+//////////////////////////////////////////////////////////////////
+//Inserted
+bool syntaxerrorspace(string s){
+  for (int i = 0; i + 1 < s.length(); i++){
+    if (s[i] == ' ' && s[i + 1] == ' ') return true;
+  }
+  return false;
+}
+
+bool checkoperand(string s){
+  for (int i = 0; i + 1 < s.length(); i++){
+    if (isalpha(s[i]) && isalpha(s[i + 2])) return true;
+  }
+  return false;
+}
+//////////////////////////////////////////////////////////////////
+
 string removeSpace(string s){
   string removed;
   for(int i=0;i<s.length();i++){
@@ -15,18 +39,9 @@ string removeSpace(string s){
   }
   return removed;
 }
-int numberInString(string s){
-  int count = 0;
-  bool flag = false;
-  for(int i=0;i<s.length();i++){
-    if(isdigit(s[i])){
-      if(flag==false) count++;
-      flag = true;
-    }
-    else flag = false;
-  }
-  return count;
-}
+
+//////////////////////////////////////////////////////////////////
+
 int numberOfOperators(string s){
   int count = 0;
   for(int i=0;i<s.length();i++){
@@ -35,6 +50,7 @@ int numberOfOperators(string s){
   }
   return count;
 }
+
 string extractBrackets(string s){
   string extracted="";
   for(int i=0;i<s.length();i++){
@@ -42,30 +58,29 @@ string extractBrackets(string s){
   }
   return extracted;
 }
-bool balancedParentheses(string expr)
-{
+
+bool balancedParentheses(string expr){
 	stack<char> temp;
-		for(int i=0;i<expr.length();i++)
-		{
-			if(temp.empty())
-			{
+		for(int i=0;i<expr.length();i++){
+			if(temp.empty()){
 				temp.push(expr[i]);
 			}
-			else if((temp.top()=='('&& expr[i]==')') || (temp.top()=='{' && expr[i]=='}') || (temp.top()=='[' && expr[i]==']'))
-			{
+      
+			else if((temp.top()=='('&& expr[i]==')') || (temp.top()=='{' && expr[i]=='}') || (temp.top()=='[' && expr[i]==']')){
 				temp.pop();
 			}
-			else
-			{
+			else{
 				temp.push(expr[i]);
 			}
 		}
-		if(temp.empty())
-		{
+
+		if(temp.empty()){
 			return true;
 		}
-		return false;
+
+		return false; 
 }
+
 int nxtOperatorIndex(string s, int index){
   for(int i=index+1;i<s.length();i++){
       if(s[i]==')'||s[i]=='(') continue;
@@ -73,31 +88,63 @@ int nxtOperatorIndex(string s, int index){
   }
   return -1;
 }
+/////////////////////////////////////////////////////////////////
 bool undefinedError(string str){
   for(int i=0;i<str.length();i++){
     if(isOperator(str[i])){
-      if(precedence(str[i])!=0&&precedence(str[i+1])!=0){
-        if(!(precedence(str[i])==1&&precedence(str[i+1])==1)) 
-          return true;
-        else continue;
+      if (precedence(str[i]) == 1 || precedence(str[i]) == 2){
+          if (precedence(str[i]) == 1){// p&q -> r
+            string temp = "";
+            int j = i + 1;
+            while(str[j] != '\0'){ 
+              temp += str[j];
+              j++;
+            }
+            return undefinedError(temp);
+          }
+
+          else if (precedence(str[i+1]) == 3){
+            i++;
+            continue;
+          }
+          else if(precedence(str[i])==2){
+            if(precedence(str[i+2])==1){
+              i+=2;
+              continue;
+            }
+          } 
+          else return true;
+        }
+
+      else if(precedence(str[i]) == 3 && (str[i+1] == '(' ||precedence(str[i+1])==3)){
+        i++;
+        continue;
       }
+
+      return true;   
     }
   }
   return false;
 }
+
 bool multiOutputError(string str){
   for(int i=0;i<str.length();i++){
     if(isOperator(str[i])){
-      char op1 = str[i];
-      char op2 = str[i+2];
-      if(op1=='/'||op1=='-'){
-        if(precedence(op1)==precedence(op2)) return true;
+      if ((precedence(str[i]) == precedence(str[i + 2])) 
+           && precedence(str[i]) != 1 
+           && (str[i] != str[i+2])){
+        return true;
       }
+      else continue;
     }
   }
   return false;
 }
-bool syntaxError(string str){
+
+
+////////////////////////////////////////////////////////////////////////
+//Improved?
+bool syntaxError1(string str){
     bool flag=false;
     //parentheses checkpoint
     if(!balancedParentheses(extractBrackets(str))) 
@@ -106,25 +153,29 @@ bool syntaxError(string str){
     else if(nxtOperatorIndex(str,0)==-1) 
       flag = true;
     //blank checkpoint
-    else if((numberInString(str)-numberInString(removeSpace(str)))!=0){ 
+    else if(syntaxerrorspace(str)){ 
       flag = true;
     }
-    //floating point checkpoint
-    else if(!properFloatingPoint(str)) 
+    else if(countPropositions(str)!=countPropositions(removeSpace(str)))
       flag = true;
+    else if (checkoperand(str)){
+      flag = true;
+    }
     return flag;
 }
+////////////////////////////////////////////////////////////////////////
+
 int logicalValidity(string str){
-    //consecutive operators:
-    if(undefinedError(str)) return 1;
-    //precedence order:
-    else if(multiOutputError(str)) return 2;
     //parenthesis:
     //blank:
-    //floating point:
-    else if(syntaxError(str)) return 3;
+    if(syntaxError1(str)) return 3;
+    //precedence order:
+    else if(multiOutputError(str)) return 2;
+    //consecutive operators:
+    else if(undefinedError(str)) return 1;
     return 0;
 }
+
 void errorMessage(string str){
   switch(logicalValidity(str)){
     case 1: cout << "undefined error";break;
