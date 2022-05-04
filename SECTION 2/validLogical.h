@@ -1,6 +1,56 @@
 #include "./2a/2a.h"
 #include <stack>
 
+string removeSpace(string s){
+  string removed;
+  for(int i=0;i<s.length();i++){
+    if(!isspace(s[i])) removed+=s[i];
+  }
+
+  cout << removed << '\n';
+  return removed;
+}
+
+string noiseRemoved(string s){
+
+  // s = removeSpace(s);
+  string temp = "";
+  for (int i = 0; i < s.length(); i++){
+    if (s[i] == '(' && s[i+1] == ')'){
+      i++;
+    }
+
+    else temp+=s[i];
+  }
+
+  /* nếu ( ) thì ổn không, có
+  int i,j;
+  for (i = 0; i < temp.length(); i++){
+    if (temp[i] == '(') break;
+  }
+
+  for (j = temp.length(); j >= 0; j--){
+    if (temp[j] == ')') break;
+  }
+  //////   ((p&q))
+  //////   0123456
+  for (int z = i + 1; z <= j - 1; z++){
+    if (temp[z] == '(' && temp[j - i - z] == ')') {//temp[1]=) and temp[5]=')'
+      temp.erase(z, z + 1);
+  //////   (p&q))
+      temp.erase(j - i - z,j - i - z + 1); 
+  //////   (p&q)
+    }
+  }
+
+  */
+
+  cout << temp << '\n';
+  return temp;
+}
+
+
+//
 int countPropositions(string s){
   int count=0;
   int state=0;
@@ -15,30 +65,22 @@ int countPropositions(string s){
   }
   return count;
 }
-//////////////////////////////////////////////////////////////////
-//Inserted
-bool syntaxerrorspace(string s){
-  for (int i = 0; i + 1 < s.length(); i++){
-    if (s[i] == ' ' && s[i + 1] == ' ') return true;
-  }
-  return false;
-}
 
-bool checkoperand(string s){
-  for (int i = 0; i + 1 < s.length(); i++){
-    if (isalpha(s[i]) && isalpha(s[i + 2])) return true;
-  }
-  return false;
-}
+
+//////////////////////////////////////////////////////////////////
+//Check if multiple space appears in the code, if there is, so it's error
+// bool syntaxerrorspace(string s){
+//   for (int i = 0; i + 1 < s.length(); i++){
+//     if (s[i] == ' ' && s[i + 1] == ' ') return true;
+//   }
+//   return false;
+// }
+
+
 //////////////////////////////////////////////////////////////////
 
-string removeSpace(string s){
-  string removed;
-  for(int i=0;i<s.length();i++){
-    if(!isspace(s[i])) removed+=s[i];
-  }
-  return removed;
-}
+//remove
+
 
 //////////////////////////////////////////////////////////////////
 
@@ -88,10 +130,12 @@ int nxtOperatorIndex(string s, int index){
   }
   return -1;
 }
+
 /////////////////////////////////////////////////////////////////
 bool undefinedError(string str){
   for(int i=0;i<str.length();i++){
-    if(isOperator(str[i])){
+    if(isOperator(str[i]) && str[i] != '(' && str[i] != ')'){
+      cout << str[i] << '\n';
       if (precedence(str[i]) == 1 || precedence(str[i]) == 2){
           if (precedence(str[i]) == 1){// p&q -> r
             string temp = "";
@@ -100,16 +144,19 @@ bool undefinedError(string str){
               temp += str[j];
               j++;
             }
+            cout << temp << '\n';
             return undefinedError(temp);
           }
 
           else if (precedence(str[i+1]) == 3){
+            cout << "fack" << '\n';
             i++;
             continue;
           }
+
           else if(precedence(str[i])==2){
             if(precedence(str[i+2])==1){
-              i+=2;
+              cout << "damn it" << '\n';
               continue;
             }
           } 
@@ -121,18 +168,21 @@ bool undefinedError(string str){
         continue;
       }
 
+      cout << "That's good Vo Manh Khang" << '\n';
+
       return true;   
     }
   }
+
   return false;
 }
 
 bool multiOutputError(string str){
   for(int i=0;i<str.length();i++){
     if(isOperator(str[i])){
-      if ((precedence(str[i]) == precedence(str[i + 2])) 
+      if ((precedence(str[i]) == precedence(str[i + 2])
            && precedence(str[i]) != 1 
-           && (str[i] != str[i+2])){
+           && (str[i] != str[i+2]) && str[i] != '(' && str[i] != ')')){
         return true;
       }
       else continue;
@@ -141,34 +191,48 @@ bool multiOutputError(string str){
   return false;
 }
 
-
 ////////////////////////////////////////////////////////////////////////
 //Improved?
-bool syntaxError1(string str){
-    bool flag=false;
+bool syntaxError(string str){
     //parentheses checkpoint
-    if(!balancedParentheses(extractBrackets(str))) 
-      flag = true;
+    if(!balancedParentheses(extractBrackets(str)))
+    {
+      cout << "BalancedParenthesis"<<endl;
+      return true;
+    }
+    
     //no operator checkpoint
-    else if(nxtOperatorIndex(str,0)==-1) 
-      flag = true;
+    else if(nxtOperatorIndex(str,0)==-1){
+      cout << "nxOperatorIndex"<<endl;
+      return true;
+    }
+    
     //blank checkpoint
-    else if(syntaxerrorspace(str)){ 
-      flag = true;
+    // else if(syntaxerrorspace(str)) {
+    //   cout << "Error space" << '\n';
+    //   return true;
+    // }
+      
+
+    else if(countPropositions(str)!=countPropositions(removeSpace(str))){
+      cout << "proposition mismatched"<<endl;
+      return true;
     }
-    else if(countPropositions(str)!=countPropositions(removeSpace(str)))
-      flag = true;
-    else if (checkoperand(str)){
-      flag = true;
-    }
-    return flag;
+    
+    // else if (checkOperand(str) ){
+    //   cout << "Operand error" << '\n';
+    //   return true;//
+    // }
+
+    return false;
 }
 ////////////////////////////////////////////////////////////////////////
 
 int logicalValidity(string str){
+    if(str.empty()) return 0;
     //parenthesis:
     //blank:
-    if(syntaxError1(str)) return 3;
+    else if(syntaxError(str)) return 3;
     //precedence order:
     else if(multiOutputError(str)) return 2;
     //consecutive operators:

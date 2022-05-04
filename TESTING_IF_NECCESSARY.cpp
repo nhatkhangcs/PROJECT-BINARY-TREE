@@ -3,7 +3,7 @@
 #include <iostream>
 // #include "./SECTION 1/1a/1a.h"
 // #include "./SECTION 1/1a/1a.h"
-#include "./SECTION 1/validArithmetic.h"
+//#include "./SECTION 1/validArithmetic.h"
 #include "./SECTION 2/validLogical.h"
 #include <string>
 #include <algorithm>
@@ -32,6 +32,8 @@ int main()
     
     string testStr;// ="(P+(Q*R)/(S-T))";
 
+
+
     // string testStr="3 + 5 ^ 8";
     // string testStr="3 + 5 ^ 8";
     
@@ -41,8 +43,8 @@ int main()
     // cout << nxtOperatorIndex(testStr, 2);
     
     //cout<<arithmeticValidity(testStr);
-    cout<<logicalValidity(testStr);
-    
+    cout<<logicalValidity(noiseRemoved(testStr));
+
     // cout<<isdigit('1');
     // if(validity(testStr)!=0) errorMessage(testStr);
     // infixToPrefix(testStr);
