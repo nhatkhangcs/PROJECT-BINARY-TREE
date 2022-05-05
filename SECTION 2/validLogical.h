@@ -202,7 +202,7 @@ bool syntaxError(string str){
     }
     
     //no operator checkpoint
-    else if(nxtOperatorIndex(str,0)==-1){
+    else if(nxtOperatorIndex(str,0)==-1&&countPropositions(str)!=0){
       cout << "nxOperatorIndex"<<endl;
       return true;
     }
@@ -229,14 +229,14 @@ bool syntaxError(string str){
 ////////////////////////////////////////////////////////////////////////
 
 int logicalValidity(string str){
-    if(str.empty()) return 0;
+    // if(str.empty()) return 0;
     //parenthesis:
     //blank:
-    else if(syntaxError(str)) return 3;
+    if(syntaxError(str)) return 3;
     //precedence order:
-    else if(multiOutputError(str)) return 2;
+    else if(multiOutputError(removeSpace(str))) return 2;
     //consecutive operators:
-    else if(undefinedError(str)) return 1;
+    else if(undefinedError(removeSpace(str))) return 1;
     return 0;
 }
 
