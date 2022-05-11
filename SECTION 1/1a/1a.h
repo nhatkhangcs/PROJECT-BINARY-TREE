@@ -6,7 +6,7 @@
 using namespace std;
 
 bool isOperator(char c){
-    return(!isalpha(c) && !isdigit(c));
+    return(!isalpha(c) && !isdigit(c) && c!=')' && c!='(');
 }
 
 int precedence(char C){

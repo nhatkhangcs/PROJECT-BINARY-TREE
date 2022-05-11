@@ -7,7 +7,6 @@ string removeSpace(string s){
     if(!isspace(s[i])) removed+=s[i];
   }
 
-  cout << removed << '\n';
   return removed;
 }
 
@@ -45,7 +44,6 @@ string noiseRemoved(string s){
 
   */
 
-  cout << temp << '\n';
   return temp;
 }
 
@@ -129,9 +127,9 @@ int nxtOperatorIndex(string s, int index){
   }
   return -1;
 }
-int nxtPropositionIndex(int* arr, int len, int index){
-  for(int i=index+1;i<len;i++){
-      if(isOperator(s[i])) return i;
+int nxtParenIndex(string s, int index){
+  for(int i=index+1;i<s.length();i++){
+      if(s[i] == ')' || s[i] == '(') return i;
   }
   return -1;
 }
@@ -185,12 +183,21 @@ bool undefinedError(string str){
 }
 
 bool multiOutputError(string str){
-      if ((precedence(str[i]) == precedence(str[i + 2])
-           && precedence(str[i]) != 1 
-           && (str[i] != str[i+2]) && str[i] != '(' && str[i] != ')')){
+  for(int i = 0; i<str.length(); i++){
+    if(
+      isOperator(str[i])
+      && ((precedence(str[nxtOperatorIndex(str,i)])==2
+      && precedence(str[i]) == 2) || (precedence(str[nxtOperatorIndex(str,i)])==2
+      && precedence(str[i]) == 1))
+      && nxtOperatorIndex(str,i) != (i + 1)
+    ){
+      if (nxtParenIndex(str,i) != -1 
+          && str[nxtOperatorIndex(str,i)] < str[nxtParenIndex(str,i)]
+          ) 
         return true;
-      }
-      else continue;
+      else if (nxtParenIndex(str,i) == -1 ) 
+        return true;
+      
     }
   }
   return false;
@@ -202,30 +209,25 @@ bool syntaxError(string str){
     //parentheses checkpoint
     if(!balancedParentheses(extractBrackets(str)))
     {
-      cout << "BalancedParenthesis"<<endl;
       return true;
     }
     
     //no operator checkpoint
     else if(nxtOperatorIndex(str,0)==-1&&countPropositions(str)!=0){
-      cout << "nxOperatorIndex"<<endl;
       return true;
     }
     
     //blank checkpoint
     // else if(syntaxerrorspace(str)) {
-    //   cout << "Error space" << '\n';
     //   return true;
     // }
       
 
     else if(countPropositions(str)!=countPropositions(removeSpace(str))){
-      cout << "proposition mismatched"<<endl;
       return true;
     }
     
     // else if (checkOperand(str) ){
-    //   cout << "Operand error" << '\n';
     //   return true;//
     // }
 
