@@ -7,12 +7,14 @@ using namespace std;
 
 bool isOperator(char c)
 {
-    return (!isalpha(c) && !isdigit(c));
+    return (!isalpha(c) && !isdigit(c) && c != '(' && c != ')');
 }
  
 int precedence(char c)
 {
-    if (c == '>')// implication ->
+    if (c == '('|| c == ')') 
+        return -1;
+    else if (c == '>')// implication ->
         return 1;
     else if (c == '|' || c == '&' || c == '+')//(or | and & xor +)
         return 2;

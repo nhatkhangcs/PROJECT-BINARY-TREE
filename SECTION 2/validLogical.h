@@ -125,61 +125,66 @@ bool balancedParentheses(string expr){
 
 int nxtOperatorIndex(string s, int index){
   for(int i=index+1;i<s.length();i++){
-      if(s[i]==')'||s[i]=='(') continue;
       if(isOperator(s[i])) return i;
   }
   return -1;
 }
-
+int nxtPropositionIndex(int* arr, int len, int index){
+  for(int i=index+1;i<len;i++){
+      if(isOperator(s[i])) return i;
+  }
+  return -1;
+}
 /////////////////////////////////////////////////////////////////
+
+
 bool undefinedError(string str){
-  for(int i=0;i<str.length();i++){
-    if(isOperator(str[i]) && str[i] != '(' && str[i] != ')'){
-      cout << str[i] << '\n';
-      if (precedence(str[i]) == 1 || precedence(str[i]) == 2){
-          if (precedence(str[i]) == 1){// p&q -> r
-            string temp = "";
-            int j = i + 1;
-            while(str[j] != '\0'){ 
-              temp += str[j];
-              j++;
-            }
-            cout << temp << '\n';
-            return undefinedError(temp);
-          }
-
-          else if (precedence(str[i+1]) == 3){
-            cout << "fack" << '\n';
-            i++;
-            continue;
-          }
-
-          else if(precedence(str[i])==2){
-            if(precedence(str[i+2])==1){
-              cout << "damn it" << '\n';
-              continue;
-            }
-          } 
-          else return true;
-        }
-
-      else if(precedence(str[i]) == 3 && (str[i+1] == '(' ||precedence(str[i+1])==3)){
-        i++;
-        continue;
-      }
-
-      cout << "That's good Vo Manh Khang" << '\n';
-
-      return true;   
+  int len = str.size();
+  /*
+    exceptions: !!p, p&!q, p>q>r, p&!!q, (p&q)|r
+    !!p = [3,3,0];
+    p&!q = [0,2,3,0];
+    (p&q)|r = [-1,0,2,0,-1,2,0]
+    p>q>r = [0,1,0,1,0]
+    ===undefined error===
+    p&&q = [0,2,2,0]
+    p||q = [0,2,2,0]
+    p|>q = [0,2,1,0]
+  */
+  int* pArr = new int[len]; //array of precedence
+  for(int i = 0; i < len; i++){
+    char c = str[i];
+    switch(precedence(c)){
+      case -1:
+        pArr[i] = -1;
+        break;
+      case 1:
+        pArr[i] = 1;
+        break;
+      case 2:
+        pArr[i] = 2;
+        break;
+      case 3:
+        pArr[i] = 3;
+        break;
+      default:
+        pArr[i] = 0;
+        break;
     }
   }
-
+  for(int i = 0; i < len; i++){
+    //error: 22, 12, 31
+    //exceptions: 13, 
+    if((pArr[i]==pArr[i+1]&&pArr[i]==2)
+    || (pArr[i]==2 && pArr[i+1] == 1)
+    || (pArr[i]==1&&pArr[i+1]==2)
+    || (pArr[i]==3&&(pArr[i+1]==1||pArr[i+1]==2))
+    ) return true;
+  }
   return false;
 }
 
 bool multiOutputError(string str){
-  for(int i=0;i<str.length();i++){
-    if(isOperator(str[i])){
       if ((precedence(str[i]) == precedence(str[i + 2])
            && precedence(str[i]) != 1 
            && (str[i] != str[i+2]) && str[i] != '(' && str[i] != ')')){
