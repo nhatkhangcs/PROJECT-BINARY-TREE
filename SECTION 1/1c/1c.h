@@ -4,6 +4,10 @@
 #include <cmath>
 #include <algorithm>
 
+bool isOperator(char c){
+    return(!isalpha(c) && !isdigit(c) && c!=')' && c!='(');
+}
+
 class Stack
 {
     public:

@@ -19,18 +19,15 @@ int precedence(char C){
     return 0;
 }
  
-string infixToPostfix(string s)
-{
- 
+string infixToPostfix(string s){
     stack<char> st; 
     string result;
  
     for (int i = 0; i < s.length(); i++) {
         if (s[i] == ' ') continue;
         char c = s[i];
- 
-        if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
-            || (c >= '0' && c <= '9'))
+        if (((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
+            || (c >= '0' && c <= '9')) ||( c == '-' && s[i-1] == '(' ))
             result += c;
  
 
@@ -65,9 +62,7 @@ string infixToPostfix(string s)
     return result;
 }
 
-
-string infixToPrefix(string infix)
-{
+string infixToPrefix(string infix){
     int l = infix.size();
     reverse(infix.begin(), infix.end());
     for (int i = 0; i < l; i++) {

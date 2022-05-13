@@ -125,12 +125,17 @@ int arithmeticValidity(string str){
     else if(syntaxError(str)) return 3;
     return 0;
 }
-void errorMessage(string str){
+bool errorMessage(string str){
   switch(arithmeticValidity(str)){
-    case 1: cout << "undefined error";break;
-    case 2: cout << "multiple output";break;
-    case 3: cout << "syntax error";break;
-    default: break;
+    case 1: cout << "undefined error";
+        return true;
+        break;
+    case 2: cout << "multiple output";
+        return true;
+        break;
+    case 3: cout << "syntax error";
+        return true;
+        break;
+    default: return false;
   }
-  
 }
