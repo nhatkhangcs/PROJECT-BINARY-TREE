@@ -62,7 +62,7 @@ string infixToPostfix(string s){
     return result;
 }
 
-string infixToPrefix(string infix){
+string infixToPrefix(string infix){ 
     int l = infix.size();
     reverse(infix.begin(), infix.end());
     for (int i = 0; i < l; i++) {
@@ -79,3 +79,5 @@ string infixToPrefix(string infix){
  
     return prefix;
 }
+
+

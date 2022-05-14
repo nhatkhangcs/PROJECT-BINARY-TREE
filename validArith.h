@@ -1,5 +1,7 @@
-#include "./1a/1a.h"
-#include <stack>
+#include "arithModule.h"
+
+using namespace std;
+
 bool properFloatingPoint(string s){
   for(int i=0;i<s.length();i++){
     if(s[i]=='.'){
@@ -8,6 +10,7 @@ bool properFloatingPoint(string s){
   }
   return true;
 }
+
 string removeSpace(string s){
   string removed;
   for(int i=0;i<s.length();i++){
@@ -15,6 +18,7 @@ string removeSpace(string s){
   }
   return removed;
 }
+
 int numberInString(string s){
   int count = 0;
   bool flag = false;
@@ -27,6 +31,7 @@ int numberInString(string s){
   }
   return count;
 }
+
 int numberOfOperators(string s){
   int count = 0;
   for(int i=0;i<s.length();i++){
@@ -35,6 +40,7 @@ int numberOfOperators(string s){
   }
   return count;
 }
+
 string extractBrackets(string s){
   string extracted="";
   for(int i=0;i<s.length();i++){
@@ -42,8 +48,8 @@ string extractBrackets(string s){
   }
   return extracted;
 }
-bool balancedParentheses(string expr)
-{
+
+bool balancedParentheses(string expr){
 	stack<char> temp;
 		for(int i=0;i<expr.length();i++)
 		{
@@ -66,6 +72,7 @@ bool balancedParentheses(string expr)
 		}
 		return false;
 }
+
 int nxtOperatorIndex(string s, int index){
   for(int i=index+1;i<s.length();i++){
       if(s[i]==')'||s[i]=='(') continue;
@@ -73,18 +80,24 @@ int nxtOperatorIndex(string s, int index){
   }
   return -1;
 }
+
 bool undefinedError(string str){
   for(int i=0;i<str.length();i++){
     if(isOperator(str[i])){
       if(precedence(str[i])!=0&&precedence(str[i+1])!=0){
-        if(!(precedence(str[i])==1&&precedence(str[i+1])==1)) 
+        if(precedence(str[i+1])!=1)  
+          // 11: ++ -- -> okay, 21: *+ /- *- /+ 31: ^+ ^- still okay  
           return true;
         else continue;
+
       }
     }
+
+    // 
   }
   return false;
 }
+
 bool multiOutputError(string str){
   for(int i=0;i<str.length();i++){
     if(isOperator(str[i])){
@@ -97,34 +110,36 @@ bool multiOutputError(string str){
   }
   return false;
 }
+
 bool syntaxError(string str){
     bool flag=false;
-    //parentheses checkpoint
+
     if(!balancedParentheses(extractBrackets(str))) 
       flag = true;
-    //no operator checkpoint
+
     else if(nxtOperatorIndex(str,0)==-1) 
       flag = true;
-    //blank checkpoint
-    else if((numberInString(str)-numberInString(removeSpace(str)))!=0){ 
+
+    else if((numberInString(str)-numberInString(removeSpace(str)))!=0)
       flag = true;
-    }
-    //floating point checkpoint
+    
+
     else if(!properFloatingPoint(str)) 
       flag = true;
+
     return flag;
 }
+
 int arithmeticValidity(string str){
-    //consecutive operators:
+
     if(undefinedError(str)) return 1;
-    //precedence order:
+
     else if(multiOutputError(str)) return 2;
-    //parenthesis:
-    //blank:
-    //floating point:
+
     else if(syntaxError(str)) return 3;
     return 0;
 }
+
 bool errorMessage(string str){
   switch(arithmeticValidity(str)){
     case 1: cout << "undefined error";

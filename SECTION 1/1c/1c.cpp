@@ -223,13 +223,9 @@ string postToInfix(string exp){
     for (int i=0; i < exp.length(); i++) { 
         if (exp[i] == ' ') continue;
       
-        else if (isOperand(exp[i])) { 
-           string op(1, exp[i]); 
-           s.push(op); 
-        } 
-
-        else if ((exp[i] == '-' || exp[i] == '+') && i <= exp.length() - 2){
+        else if (isOperand(exp[i])){
           string temp = "";
+          if (isOperator(exp[i-1])) temp += exp[i-1];
           while(exp[i] != ' '){
             temp += exp[i];
             i++;
@@ -257,14 +253,31 @@ string preToInfix(string pre_exp) {
   int length = pre_exp.size();
  
   for (int i = length - 1; i >= 0; i--) {
+
+    if (pre_exp[i] == ' ') continue;
+
+    else if (isOperand(pre_exp[i])){
+      int j = i;
+      while(pre_exp[j] != ' ') j--;
+      j++;
+      string temp = "";
+      for (int k = j; k <= i; k++){
+        temp += pre_exp[k];
+      }
+      i = j;
+
+      s.push(temp);
+    }
  
-    if (isOperator(pre_exp[i])) {
- 
+    else if (isOperator(pre_exp[i])) {
+      
       string op1 = s.top();   s.pop();
+      if (s.empty()){
+        return "";
+      }
       string op2 = s.top();   s.pop();
- 
+
       string temp = "(" + op1 + pre_exp[i] + op2 + ")";
- 
       s.push(temp);
     }
  
@@ -283,13 +296,10 @@ double evaluatePostfix(string exp){
     if (!stack) return -1;
  
     for (i = 0; exp[i]; i++){
-        
 
         if(exp[i] == ' ') continue;
 
-        else if(isOperator(exp[i]) && isdigit(exp[i+1])) continue;
-
-        else if (isdigit(exp[i])) {
+        else if(isOperator(exp[i]) && isdigit(exp[i+1])) {
             string t = "";
             int j = i;
             int k;
@@ -305,6 +315,18 @@ double evaluatePostfix(string exp){
             push(stack,result);
         }
 
+        else if (isdigit(exp[i])){
+          string t = "";
+          int j = i;
+          while(exp[j] != ' ') {
+            t += exp[j];
+            j++;
+          }
+
+          i = j - 1;
+          push(stack, stod(t));
+        }
+
         else{
             if ((exp[i] == '/' && exp[i + 1] == '*') || (exp[i] == '*' && exp[i + 1] == '/') || (exp[i] == '-' && exp[i + 1] == '+') || (exp[i] == '+' && exp[i + 1] == '-')){
                 cout << "MULTI-OUTPUT ERROR";
@@ -314,7 +336,6 @@ double evaluatePostfix(string exp){
             else{
                 double val1 = pop(stack);
                 double val2 = pop(stack);
-                
                 switch (exp[i]){
                     case '+': 
                         push(stack, val2 + val1); break;
@@ -361,7 +382,8 @@ double evaluatePrefix(string exp){
             else reverse(t.begin(), t.end());
 
             double result = stod(t);
-            while(exp[j] != ' ') j--;
+
+            cout << t << '\n';            while(exp[j] != ' ') j--;
             j++;
             push(stack, result);
         }
