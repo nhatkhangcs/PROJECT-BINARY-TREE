@@ -8,7 +8,7 @@
 using namespace std;
 
 bool isOperand(char x){
-   return isdigit(x);
+   return (isdigit(x) || isalpha(x));
 }
 
 bool isOperator(char c){
@@ -148,14 +148,9 @@ bool undefinedError(string str){
     if(isOperator(str[i])){
       if(precedence(str[i])!=0&&precedence(str[i+1])!=0){
         if(precedence(str[i+1])!=1)  
-          // 11: ++ -- -> okay, but 21: *+ /- *- /+ 31: ^+ ^- still okay  
           return true;
-        else continue;
-
       }
     }
-
-    // 
   }
   return false;
 }
@@ -188,6 +183,12 @@ bool syntaxError(string str){
 
     else if(!properFloatingPoint(str)) 
       flag = true;
+
+    for (int i = 0; i < str.length(); i++){
+      if (isOperator(str[i])&&(i==0||i==str.length()-1)){
+         return true;
+      }
+    }
 
     return flag;
 }
@@ -431,7 +432,6 @@ int main(){
     getline(cin, exp);
     if (isdigit(exp[0])){
       string temp = postToInfix(exp);
-      cout << temp << '\n';
       if(!errorMessage(postToInfix(exp)))
        cout << "Postfix evaluation: "<<fixed<<setprecision(3) << evaluatePostfix(exp);
     }

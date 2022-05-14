@@ -8,7 +8,6 @@
 #include <utility>
 #include <algorithm>
 #include <fstream>
-#include "dictionary.txt"
 
 using namespace std;
 

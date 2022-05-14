@@ -7,6 +7,10 @@ infix expression to postfix*/
 
 using namespace std;
 
+bool isOperand(char x){
+   return (isdigit(x) || isalpha(x));
+}
+
 bool isOperator(char c){
     return(!isalpha(c) && !isdigit(c) && c!=')' && c!='(' && (c == '+' || c == '-' || c == '*' || c == '/' || c == '^'));
 }
@@ -29,6 +33,7 @@ bool properFloatingPoint(string s){
   }
   return true;
 }
+
 string removeSpace(string s){
   string removed;
   for(int i=0;i<s.length();i++){
@@ -36,7 +41,8 @@ string removeSpace(string s){
   }
   return removed;
 }
-int numberInString(string s){
+
+int countOperands(string s){
   int count = 0;
   bool flag = false;
   for(int i=0;i<s.length();i++){
@@ -48,6 +54,7 @@ int numberInString(string s){
   }
   return count;
 }
+
 int numberOfOperators(string s){
   int count = 0;
   for(int i=0;i<s.length();i++){
@@ -56,6 +63,7 @@ int numberOfOperators(string s){
   }
   return count;
 }
+
 string extractBrackets(string s){
   string extracted="";
   for(int i=0;i<s.length();i++){
@@ -63,6 +71,7 @@ string extractBrackets(string s){
   }
   return extracted;
 }
+
 bool balancedParentheses(string expr){
 	stack<char> temp;
 		for(int i=0;i<expr.length();i++)
@@ -86,6 +95,7 @@ bool balancedParentheses(string expr){
 		}
 		return false;
 }
+
 int nxtOperatorIndex(string s, int index){
   for(int i=index+1;i<s.length();i++){
       if(s[i]==')'||s[i]=='(') continue;
@@ -93,6 +103,7 @@ int nxtOperatorIndex(string s, int index){
   }
   return -1;
 }
+
 bool undefinedError(string str){
   for(int i=0;i<str.length();i++){
     if(isOperator(str[i])){
@@ -105,6 +116,7 @@ bool undefinedError(string str){
   }
   return false;
 }
+
 bool multiOutputError(string str){
   for(int i=0;i<str.length();i++){
     if(isOperator(str[i])){
@@ -117,6 +129,7 @@ bool multiOutputError(string str){
   }
   return false;
 }
+
 bool syntaxError(string str){
     bool flag=false;
     //parentheses checkpoint
@@ -126,7 +139,7 @@ bool syntaxError(string str){
     else if(nxtOperatorIndex(str,0)==-1) 
       flag = true;
     //blank checkpoint
-    else if((numberInString(str)-numberInString(removeSpace(str)))!=0){ 
+    else if((countOperands(str)!=countOperands(removeSpace(str)))){ 
       flag = true;
     }
     //floating point checkpoint
@@ -161,16 +174,14 @@ bool errorMessage(string str){
  
 string infixToPostfix(string s){
     stack<char> st; 
-    string result;
+    string result = "";
  
     for (int i = 0; i < s.length(); i++) {
         if (s[i] == ' ') continue;
         char c = s[i];
-        if (((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
-            || (c >= '0' && c <= '9')) ||( c == '-' && s[i-1] == '(' ))
-            result += c;
- 
+        if (isOperand(c)) result += c;
 
+        else if (s[i] == '-' &&(s[i+1] == '+' || s[i-1] == '+')) ;
         else if (c == '(') st.push('(');
         else if (c == ')') {
             while (st.top() != '(') {
