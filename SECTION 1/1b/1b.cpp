@@ -177,11 +177,16 @@ string infixToPostfix(string s){
     string result = "";
  
     for (int i = 0; i < s.length(); i++) {
-        if (s[i] == ' ') continue;
         char c = s[i];
-        if (isOperand(c)) result += c;
-
-        else if (s[i] == '-' &&(s[i+1] == '+' || s[i-1] == '+')) ;
+        if (isOperand(c))
+          result+=c;
+        else if(precedence(c)==1
+        &&(i==0||isOperator(s[i-1]))
+        &&isOperand(s[i+1])){
+          result += c;
+          result += s[i+1];
+          ++i;
+        }
         else if (c == '(') st.push('(');
         else if (c == ')') {
             while (st.top() != '(') {
@@ -217,6 +222,6 @@ int main(){
     string s;
     cout << "Please enter a infix-notation representation of an arithmetic expression: ";
     getline(cin,s);
-    if(!errorMessage(s)) cout << "Infix ---> Postfix: "<< infixToPostfix(s);
+    if(!errorMessage(s)) cout << "Infix ---> Postfix: "<< infixToPostfix(removeSpace(s));
     return 0;
 }

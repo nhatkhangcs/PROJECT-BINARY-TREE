@@ -5,6 +5,10 @@
 
 using namespace std;
 
+bool isOperand(char x){
+   return (isdigit(x) || isalpha(x));
+}
+
 bool isOperator(char c){
     return(!isalpha(c) && !isdigit(c) && c!=')' && c!='(' && (c == '+' || c == '-' || c == '*' || c == '/' || c == '^'));
 }
@@ -34,15 +38,17 @@ string removeSpace(string s){
   }
   return removed;
 }
-int numberInString(string s){
-  int count = 0;
-  bool flag = false;
-  for(int i=0;i<s.length();i++){
-    if(isdigit(s[i])){
-      if(flag==false) count++;
-      flag = true;
+int countOperands(string s){
+  int count=0;
+  int state=0;
+  for(int i = 0;i<s.length();i++){
+    if(isspace(s[i])||isOperator(s[i])){
+    	state = 0; 
     }
-    else flag = false;
+    else if(state == 0){
+    	state = 1;
+    	++count;
+    }
   }
   return count;
 }
@@ -87,8 +93,7 @@ bool balancedParentheses(string expr)
 }
 int nxtOperatorIndex(string s, int index){
   for(int i=index+1;i<s.length();i++){
-      if(s[i]==')'||s[i]=='(') continue;
-      if(isOperator(s[i])) return i;
+    if(isOperator(s[i])) return i;
   }
   return -1;
 }
@@ -96,7 +101,7 @@ bool undefinedError(string str){
   for(int i=0;i<str.length();i++){
     if(isOperator(str[i])){
       if(precedence(str[i])!=0&&precedence(str[i+1])!=0){
-        if(!(precedence(str[i])==1&&precedence(str[i+1])==1)) 
+        if(precedence(str[i+1])!=1) 
           return true;
         else continue;
       }
@@ -116,16 +121,17 @@ bool multiOutputError(string str){
   }
   return false;
 }
+
 bool syntaxError(string str){
     bool flag=false;
     //parentheses checkpoint
     if(!balancedParentheses(extractBrackets(str))) 
       flag = true;
     //no operator checkpoint
-    else if(nxtOperatorIndex(str,0)==-1) 
+    else if(nxtOperatorIndex(str,0)==-1&&countOperands(str)!=1) 
       flag = true;
     //blank checkpoint
-    else if((numberInString(str)-numberInString(removeSpace(str)))!=0){ 
+    else if((countOperands(str)!=countOperands(removeSpace(str)))){ 
       flag = true;
     }
     //floating point checkpoint
@@ -162,12 +168,16 @@ string infixToPostfix(string s){
     string result;
  
     for (int i = 0; i < s.length(); i++) {
-        if (s[i] == ' ') continue;
         char c = s[i];
-        if (((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
-            || (c >= '0' && c <= '9')) ||( c == '-' && s[i-1] == '(' ))
-            result += c;
- 
+        if (isOperand(c))
+          result+=c;
+        else if(precedence(c)==1
+        &&(i==0||isOperator(s[i-1]))
+        &&isOperand(s[i+1])){
+          result += c;
+          result += s[i+1];
+          ++i;
+        }
 
         else if (c == '(') st.push('(');
         else if (c == ')') {
@@ -180,7 +190,7 @@ string infixToPostfix(string s){
  
         else {
             while (!st.empty()
-                   && precedence(s[i]) <= precedence(st.top())) {
+                   && precedence(s[i]) < precedence(st.top())) {
                 if (c == '^' && st.top() == '^')
                     break;
                 else {
@@ -190,19 +200,36 @@ string infixToPostfix(string s){
             }
             st.push(c);
         }
+        //Post: abc*-f-g**+
+        //      abc-f-g***+
     }
  
     while (!st.empty()) {
         result += st.top();
         st.pop();
     }
- 
     return result;
+}
+
+string revInfix(string s){
+  string result="";
+  for (int i = s.length()-1; i>=0; i--){
+    if(isOperand(s[i])
+    &&precedence(s[i-1])==1
+    &&isOperator(s[i-2])){
+      result+=s[i-1];
+      result+=s[i];
+      i--;
+    }
+    else result += s[i];
+  }
+  cout <<"reversed: "<< result <<endl;
+  return result;
 }
 
 string infixToPrefix(string infix){
     int l = infix.size();
-    reverse(infix.begin(), infix.end());
+    infix = revInfix(infix);
     for (int i = 0; i < l; i++) {
         if (infix[i] == '(') {
             infix[i] = ')';
@@ -212,9 +239,7 @@ string infixToPrefix(string infix){
         }
     }
     string prefix = infixToPostfix(infix);
- 
-    reverse(prefix.begin(), prefix.end());
- 
+    cout <<"b4: "<<prefix<<endl;
     return prefix;
 }
 
@@ -222,6 +247,7 @@ int main(){
     string s;
     cout << "Please enter a infix-notation representation of an arithmetic expression: ";
     getline(cin,s);
-    if(!errorMessage(s)) cout << "Infix ---> Prefix: " << infixToPrefix(s);
+    if(!errorMessage(s)) cout << "Infix ---> Postfix: " << infixToPostfix(removeSpace(s))<<endl;
+    if(!errorMessage(s)) cout << "Infix ---> Prefix: " << infixToPrefix(removeSpace(s));
     return 0;
 }
