@@ -33,7 +33,6 @@ bool properFloatingPoint(string s){
   }
   return true;
 }
-
 string removeSpace(string s){
   string removed;
   for(int i=0;i<s.length();i++){
@@ -41,20 +40,20 @@ string removeSpace(string s){
   }
   return removed;
 }
-
 int countOperands(string s){
-  int count = 0;
-  bool flag = false;
-  for(int i=0;i<s.length();i++){
-    if(isdigit(s[i])){
-      if(flag==false) count++;
-      flag = true;
+  int count=0;
+  int state=0;
+  for(int i = 0;i<s.length();i++){
+    if(isspace(s[i])||isOperator(s[i])){
+    	state = 0; 
     }
-    else flag = false;
+    else if(state == 0){
+    	state = 1;
+    	++count;
+    }
   }
   return count;
 }
-
 int numberOfOperators(string s){
   int count = 0;
   for(int i=0;i<s.length();i++){
@@ -63,7 +62,6 @@ int numberOfOperators(string s){
   }
   return count;
 }
-
 string extractBrackets(string s){
   string extracted="";
   for(int i=0;i<s.length();i++){
@@ -71,8 +69,8 @@ string extractBrackets(string s){
   }
   return extracted;
 }
-
-bool balancedParentheses(string expr){
+bool balancedParentheses(string expr)
+{
 	stack<char> temp;
 		for(int i=0;i<expr.length();i++)
 		{
@@ -95,20 +93,17 @@ bool balancedParentheses(string expr){
 		}
 		return false;
 }
-
 int nxtOperatorIndex(string s, int index){
   for(int i=index+1;i<s.length();i++){
-      if(s[i]==')'||s[i]=='(') continue;
-      if(isOperator(s[i])) return i;
+    if(isOperator(s[i])) return i;
   }
   return -1;
 }
-
 bool undefinedError(string str){
   for(int i=0;i<str.length();i++){
     if(isOperator(str[i])){
       if(precedence(str[i])!=0&&precedence(str[i+1])!=0){
-        if(!(precedence(str[i])==1&&precedence(str[i+1])==1)) 
+        if(precedence(str[i+1])!=1) 
           return true;
         else continue;
       }
@@ -116,7 +111,6 @@ bool undefinedError(string str){
   }
   return false;
 }
-
 bool multiOutputError(string str){
   for(int i=0;i<str.length();i++){
     if(isOperator(str[i])){
@@ -132,17 +126,17 @@ bool multiOutputError(string str){
 
 bool syntaxError(string str){
     bool flag=false;
-    //parentheses checkpoint
+
     if(!balancedParentheses(extractBrackets(str))) 
       flag = true;
-    //no operator checkpoint
-    else if(nxtOperatorIndex(str,0)==-1) 
+
+    else if(nxtOperatorIndex(str,0)==-1&&countOperands(str)!=1) 
       flag = true;
-    //blank checkpoint
+
     else if((countOperands(str)!=countOperands(removeSpace(str)))){ 
       flag = true;
     }
-    //floating point checkpoint
+
     else if(!properFloatingPoint(str)) 
       flag = true;
     return flag;
@@ -156,7 +150,6 @@ int arithmeticValidity(string str){
     else if(syntaxError(str)) return 3;
     return 0;
 }
-
 bool errorMessage(string str){
   switch(arithmeticValidity(str)){
     case 1: cout << "undefined error";
@@ -175,19 +168,25 @@ bool errorMessage(string str){
 string infixToPostfix(string s){
     stack<char> st; 
     string result = "";
- 
     for (int i = 0; i < s.length(); i++) {
         char c = s[i];
+
         if (isOperand(c))
           result+=c;
+
+        else if (c == ' ' && s[i+1] != ' ') {
+          if (result[result.length()-1] != ' ') result += c;
+        }
+
         else if(precedence(c)==1
-        &&(i==0||isOperator(s[i-1]))
+        &&(i==0||isOperator(s[i-2]))
         &&isOperand(s[i+1])){
           result += c;
-          result += s[i+1];
+          result += s[i+1]; 
           ++i;
         }
-        else if (c == '(') st.push('(');
+
+        else if (c == '(') st.push('('); 
         else if (c == ')') {
             while (st.top() != '(') {
                 result += st.top();
@@ -202,7 +201,7 @@ string infixToPostfix(string s){
                 if (c == '^' && st.top() == '^')
                     break;
                 else {
-                    result += st.top();
+                    result = result + st.top() + " ";
                     st.pop();
                 }
             }
@@ -211,10 +210,10 @@ string infixToPostfix(string s){
     }
  
     while (!st.empty()) {
-        result += st.top();
+        result = result + " " + st.top();
         st.pop();
     }
- 
+
     return result;
 }
  

@@ -298,7 +298,6 @@ int main(){
     string s;
     cout << "Please enter a infix-notation representation of an arithmetic expression: ";
     getline(cin,s);
-    if(!errorMessage(s)) cout << "Infix ---> Postfix: " << infixToPostfix((s))<< '\n';
-    if(!errorMessage(s)) cout << "Infix ---> Prefix: " << infixToPrefix(s);
+    if(!errorMessage(s)) cout << "Infix ---> Prefix: " << removeSpace(infixToPrefix(s));
     return 0;
 }
