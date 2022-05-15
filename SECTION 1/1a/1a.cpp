@@ -124,17 +124,17 @@ bool multiOutputError(string str){
 
 bool syntaxError(string str){
     bool flag=false;
-    //parentheses checkpoint
+
     if(!balancedParentheses(extractBrackets(str))) 
       flag = true;
-    //no operator checkpoint
+
     else if(nxtOperatorIndex(str,0)==-1&&countOperands(str)!=1) 
       flag = true;
-    //blank checkpoint
+
     else if((countOperands(str)!=countOperands(removeSpace(str)))){ 
       flag = true;
     }
-    //floating point checkpoint
+
     else if(!properFloatingPoint(str)) 
       flag = true;
     return flag;
@@ -165,21 +165,26 @@ bool errorMessage(string str){
  
 string infixToPostfix(string s){
     stack<char> st; 
-    string result;
- 
+    string result = "";
     for (int i = 0; i < s.length(); i++) {
         char c = s[i];
+
         if (isOperand(c))
           result+=c;
+
+        else if (c == ' ' && s[i+1] != ' ') {
+          if (result[result.length()-1] != ' ') result += c;
+        }
+
         else if(precedence(c)==1
-        &&(i==0||isOperator(s[i-1]))
+        &&(i==0||isOperator(s[i-2]))
         &&isOperand(s[i+1])){
           result += c;
-          result += s[i+1];
+          result += s[i+1]; 
           ++i;
         }
 
-        else if (c == '(') st.push('(');
+        else if (c == '(') st.push('('); 
         else if (c == ')') {
             while (st.top() != '(') {
                 result += st.top();
@@ -190,64 +195,110 @@ string infixToPostfix(string s){
  
         else {
             while (!st.empty()
-                   && precedence(s[i]) < precedence(st.top())) {
+                   && precedence(s[i]) <= precedence(st.top())) {
                 if (c == '^' && st.top() == '^')
                     break;
                 else {
-                    result += st.top();
+                    result = result + st.top() + " ";
                     st.pop();
                 }
             }
             st.push(c);
         }
-        //Post: abc*-f-g**+
-        //      abc-f-g***+
     }
  
     while (!st.empty()) {
-        result += st.top();
+        result = result + " " + st.top();
         st.pop();
     }
+
     return result;
 }
 
-string revInfix(string s){
-  string result="";
-  for (int i = s.length()-1; i>=0; i--){
-    if(isOperand(s[i])
-    &&precedence(s[i-1])==1
-    &&isOperator(s[i-2])){
-      result+=s[i-1];
-      result+=s[i];
-      i--;
+string proReverse(string prefix){
+  reverse(prefix.begin(), prefix.end());
+  
+    string buffer = "";
+    string ans = "";
+
+    int le = prefix.length();
+    for (int i = 0; i < le; i++){
+      if (prefix[i] != ' '){
+        buffer += prefix[i];
+      }
+
+      else{
+        reverse(buffer.begin(), buffer.end());
+        ans += buffer + " ";
+        buffer = "";
+      }
     }
-    else result += s[i];
-  }
-  cout <<"reversed: "<< result <<endl;
-  return result;
+    
+    reverse(buffer.begin(), buffer.end());
+    ans += buffer;
+    
+    return ans;
 }
 
 string infixToPrefix(string infix){
+    infix = proReverse(infix);
     int l = infix.size();
-    infix = revInfix(infix);
-    for (int i = 0; i < l; i++) {
-        if (infix[i] == '(') {
-            infix[i] = ')';
+    stack<char> st; 
+    string result = "";
+    for (int i = 0; i < infix.length(); i++) {
+        char c = infix[i];
+
+        if (isOperand(c))
+          result+=c;
+
+        else if (c == ' ' && infix[i+1] != ' ') {
+          if (result[result.length()-1] != ' ') result += c;
         }
-        else if (infix[i] == ')') {
-            infix[i] = '(';
+
+        else if(precedence(c)==1
+        &&(i==0||isOperator(infix[i-2]))
+        &&isOperand(infix[i+1])){
+          result += c;
+          result += infix[i+1]; 
+          ++i;
+        }
+
+        else if (c == '(') st.push('('); 
+        else if (c == ')') {
+            while (st.top() != '(') {
+                result += st.top();
+                st.pop();
+            }
+            st.pop();
+        }
+ 
+        else {
+            while (!st.empty()
+                   && precedence(infix[i]) < precedence(st.top())) {
+                if (c == '^' && st.top() == '^')
+                    break;
+                else {
+                    result = result + st.top() + " ";
+                    st.pop();
+                }
+            }
+            st.push(c);
         }
     }
-    string prefix = infixToPostfix(infix);
-    cout <<"b4: "<<prefix<<endl;
-    return prefix;
-}
+ 
+    while (!st.empty()) {
+        result = result + " " + st.top();
+        st.pop();
+    }
 
+    return proReverse(result);
+}
+    
 int main(){
     string s;
     cout << "Please enter a infix-notation representation of an arithmetic expression: ";
     getline(cin,s);
-    if(!errorMessage(s)) cout << "Infix ---> Postfix: " << infixToPostfix(removeSpace(s))<<endl;
-    if(!errorMessage(s)) cout << "Infix ---> Prefix: " << infixToPrefix(removeSpace(s));
+    if(!errorMessage(s)) cout << "Infix ---> Postfix: " << infixToPostfix((s))<< '\n';
+    if(!errorMessage(s)) cout << "Infix ---> Prefix: " << infixToPrefix(s);
     return 0;
 }
